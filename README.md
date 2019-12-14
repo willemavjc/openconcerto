@@ -59,10 +59,10 @@ Here is a complete demonstration:
 PS C:\Users\me\Desktop> Get-ExecutionPolicy
 Restricted
 
-PS C:\Users\me\Desktop> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+PS C:\Users\me\Desktop> Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 
 PS C:\Users\me\Desktop> Get-ExecutionPolicy
-RemoteSigned
+Unrestricted
 
 PS C:\Users\me\Desktop> ./make.ps1
 ...
