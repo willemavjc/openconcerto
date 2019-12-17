@@ -1,5 +1,5 @@
 # Customize below your environment configuration:
-$DATABASE="postgres:12.1-alpine"
+$IMAGE="postgres:12.1-alpine"
 $OPENCONCERTO="1.6.3"
 
 # [!] WARNING: DO NOT EDIT BELOW. [!] WARNING: DO NOT EDIT BELOW. [!] WARNING: DO NOT EDIT BELOW. [!]
@@ -35,7 +35,7 @@ if ( !$? )
 
 Write-Host "Docker: Download database engine."
 
-docker image pull $DATABASE *> $NULL
+docker image pull $IMAGE *> $NULL
 
 if ( !$? )
 {
@@ -81,7 +81,7 @@ Write-Host ""
 
 Write-Host "Docker: Set up database"
 
-docker container run --name opendb -d -p 5432:5432 --network=opennw -v openfs:/var/lib/postgresql/data -e POSTGRES_PASSWORD=p455w0rd $DATABASE
+docker container run --name opendb -d -p 5432:5432 --network=opennw -v openfs:/var/lib/postgresql/data -e POSTGRES_PASSWORD=p455w0rd $IMAGE
 
 if ( !$? )
 {
