@@ -103,3 +103,7 @@ For Visual Studio Code:
   - Profile name: `OpenConcerto`
 
 From there, you now only need to type any query in any new SQL file, do a right click and select `Execute Query`.
+
+# Licence
+
+MIT
