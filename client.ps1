@@ -13,13 +13,13 @@ Write-Host "| Your ""Docker Desktop for Windows"" must be configured and running
 Write-Host "| The installation time will depend on your machine and network capabilities."
 Write-Host ""
 
-#Start-Sleep -s 5
+Start-Sleep -s 5
 
 Write-Host "INSTALLATION WILL BEGIN IN 30 SECONDS."
 Write-Host "Press CTRL^C to abort now."
 Write-Host ""
 
-#Start-Sleep -s 30
+Start-Sleep -s 30
 
 Write-Host "Go."
 Write-Host ""
