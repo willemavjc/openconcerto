@@ -28,7 +28,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
 PS C:\Users\me\Desktop> ls
 ...
--a----       12/14/2019   6:02 PM           4166 server.ps1
+-a----       12/18/2019  10:02 AM           4678 server.ps1
 ...
 
 PS C:\Users\me\Desktop> ./server.ps1
@@ -103,6 +103,71 @@ For Visual Studio Code:
   - Profile name: `OpenConcerto`
 
 From there, you now only need to type any query in any new SQL file, do a right click and select `Execute Query`.
+
+# OpenConcerto desktop
+
+**Please note that OpenConcerto's client (called "multiposte") support is experimental.**
+
+This installation is intended for environments where:
+
+- Java is not welcomed and is prefered isolated from Windows (e.g. security concerns)
+- Multiple Java versions coexistence are not wanted
+
+## Prerequisites
+
+See OpenConcerto database section.
+
+## Installation
+
+Download `client.ps1` and run it from any (Windows) PowerShell command interface.
+
+Example:
+```
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\me\Desktop> ls
+...
+-a----       12/18/2019  11:34 AM           5401 client.ps1
+...
+
+PS C:\Users\me\Desktop> ./client.ps1
+```
+
+As of Dec. 2019, `client.ps1` will install an OpenConcerto 1.6.3 over a OpenJDK 14. Both releases can be modified from the upper section of the script.
+
+## Execution policy restriction
+
+See OpenConcerto database section.
+
+## Launch XDisplay
+
+```
+#!/bin/bash
+
+nohup /usr/bin/Xvfb ${DISPLAY} -screen 0 ${RESOLUTION} -ac +extension GLX +render -noreset >/dev/null 2>&1 &
+nohup startxfce4 >/dev/null 2>&1 &
+nohup x11vnc -xkb -noxrecord -noxfixes -noxdamage -display ${DISPLAY} -forever -bg -rfbauth /home/alpine/.vnc/passwd -users alpine -rfbport ${PORT} >/dev/null 2>&1 &
+```
+
+## Access via VNC Viewer
+
+```
+docker inspect opencc | Select-String -Pattern "IPAddress"
+
+route -p add 172.16.0.0 mask 255.240.0.0 10.0.75.2
+route -p delete 172.16.0.0
+route print -4
+```
+
+## Useful commands
+
+```
+docker container ls -a
+docker container start opencc
+docker container stop  opencc
+docker container exec -it -u alpine opencc sh
+```
 
 # Licence
 
