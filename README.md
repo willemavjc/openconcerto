@@ -15,11 +15,11 @@ For Windows users:
 
 For macOS and Linux users:
 
-`make.ps1` can be easily derived into a native shell script. I have no time (and no need) for it now but if one really needs it, I may consider doing it. Feel free to contribute if you have time and skills for that, you will be welcomed.
+`server.ps1` can be easily derived into a native shell script. I have no time (and no need) for it now but if one really needs it, I may consider doing it. Feel free to contribute if you have time and skills for that, you will be welcomed.
 
 ## Installation
 
-Download `make.ps1` and run it from any (Windows) PowerShell command interface.
+Download `server.ps1` and run it from any (Windows) PowerShell command interface.
 
 Example:
 ```
@@ -28,23 +28,23 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
 PS C:\Users\me\Desktop> ls
 ...
--a----       12/14/2019   6:02 PM           4166 make.ps1
+-a----       12/14/2019   6:02 PM           4166 server.ps1
 ...
 
-PS C:\Users\me\Desktop> ./make.ps1
+PS C:\Users\me\Desktop> ./server.ps1
 ```
 
-As of Dec. 2019, `make.ps1` will install an OpenConcerto 1.6.3 over a PostgreSQL 12.1. Both releases can be modified from the upper section of the script.
+As of Dec. 2019, `server.ps1` will install an OpenConcerto 1.6.3 over a PostgreSQL 12.1. Both releases can be modified from the upper section of the script.
 
 ## Execution policy restriction
 
 Depending on your Windows' current and active execution policy, you may encounter an error like the following one:
 ```
-PS C:\Users\me\Desktop> ./make.ps1
-.\make.ps1 : File cannot be loaded because running scripts is disabled on this system. For more
+PS C:\Users\me\Desktop> ./server.ps1
+.\server.ps1 : File cannot be loaded because running scripts is disabled on this system. For more
 information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
 At line:1 char:1
-+ ./make.ps1
++ ./server.ps1
 + ~~~~~~~~~~
     + CategoryInfo          : SecurityError: (:) [], PSSecurityException
     + FullyQualifiedErrorId : UnauthorizedAccess
@@ -64,7 +64,7 @@ PS C:\Users\me\Desktop> Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 PS C:\Users\me\Desktop> Get-ExecutionPolicy
 Unrestricted
 
-PS C:\Users\me\Desktop> ./make.ps1
+PS C:\Users\me\Desktop> ./server.ps1
 ...
 
 PS C:\Users\me\Desktop> Set-ExecutionPolicy -Scope CurrentUser Restricted
