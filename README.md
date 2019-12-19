@@ -23,9 +23,6 @@ Download `server.ps1` and run it from any (Windows) PowerShell command interface
 
 Example:
 ```
-Windows PowerShell
-Copyright (C) Microsoft Corporation. All rights reserved.
-
 PS C:\Users\me\Desktop> ls
 ...
 -a----       12/18/2019  10:02 AM           4678 server.ps1
@@ -50,7 +47,7 @@ At line:1 char:1
     + FullyQualifiedErrorId : UnauthorizedAccess
 ```
 
-For security (and safety) reasons, Windows now limits scripts capabilities thus preventing itself from being harmed.
+For security (and safety) reasons, Windows now limits scripts capabilities thus preventing itself from being harmed. While the execution policy should probably stay as-is because it actually protects users, sometimes against themselves, this also prevents automated scripts like this one from running.
 
 To momentarily get around this limitation, change the execution policy, run the script, and finally change it back.
 
@@ -110,7 +107,7 @@ From there, you now only need to type any query in any new SQL file, do a right 
 
 This installation is intended for environments where:
 
-- Java is not welcomed and is prefered isolated from Windows (e.g. security concerns)
+- Java is not welcomed and is prefered isolated (e.g. security concerns)
 - Multiple Java versions coexistence are not wanted
 
 ## Prerequisites
@@ -123,9 +120,6 @@ Download `client.ps1` and run it from any (Windows) PowerShell command interface
 
 Example:
 ```
-Windows PowerShell
-Copyright (C) Microsoft Corporation. All rights reserved.
-
 PS C:\Users\me\Desktop> ls
 ...
 -a----       12/18/2019  11:34 AM           5401 client.ps1
@@ -140,24 +134,79 @@ As of Dec. 2019, `client.ps1` will install an OpenConcerto 1.6.3 over a OpenJDK 
 
 See OpenConcerto database section.
 
-## Launch XDisplay
+## Start Linux' Graphical interface (XDisplay)
 
+XDisplay does not start by itself and requires some sort of service launched either manually or by system at start up.
+
+Simply create a shell script and then give it the execution permission:
+
+0. `cd ~`
+1. `vi x11.sh`
+2. `i`
+3. Copy paste the script's content
+4. `ESCAPE` 
+5. `:wq`
+6. `chmod +x x11.sh`
+7. `./x11.sh`
+
+Script's content:
 ```
 #!/bin/bash
-
 nohup /usr/bin/Xvfb ${DISPLAY} -screen 0 ${RESOLUTION} -ac +extension GLX +render -noreset >/dev/null 2>&1 &
 nohup startxfce4 >/dev/null 2>&1 &
 nohup x11vnc -xkb -noxrecord -noxfixes -noxdamage -display ${DISPLAY} -forever -bg -rfbauth /home/alpine/.vnc/passwd -users alpine -rfbport ${PORT} >/dev/null 2>&1 &
 ```
 
+For this script (and the graphical interface) to be launched at start up, add it to `init.d`.
+
+*Note for myself: Automate these steps inside `client.ps1`.*
+
 ## Access via VNC Viewer
 
-```
-docker inspect opencc | Select-String -Pattern "IPAddress"
+**Prerequisite:**
 
+- [VNC Viewer](https://www.realvnc.com/en/connect/download/viewer/) by Real VNC<sup>TM</sup>
+- Or any other application supporting **VNC protocol**
+
+To gain access to the freshly created remote desktop from your favorite computer station, you mainly need to point to the IP address of your container. But in order to be able to do so, will be required an addition of a static route in your Windows' `hosts` configuration. (Nothing complicated though.)
+
+> Why so?
+>
+> Long story short, on Windows, Docker only routes traffic via port mapping. Either this to be for (lack of) expertise or for political reasons, Docker Team has made no plan so far to change that.
+>
+> See [Networking features in Docker Desktop for Windows](https://docs.docker.com/docker-for-windows/networking/) for further details on limitations.
+>
+> This may change in 2020 thanks to Microsoft and WSL2's release which will implement a native Linux kernel. You can follow Docker Team's developments regarding WSL support from here: [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl-tech-preview/).
+
+**Until then:** Find the container's IP address and then add a static route.
+
+Here is a complete demonstration:
+```
+PS C:\> docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' opencc      
+172.19.0.2
+
+PS C:\> route -p add 172.19.0.2 mask 255.255.255.255 10.0.75.2   
+ OK!
+
+PS C:\> route print -4
+...
+===========================================================================
+Persistent Routes:
+  Network Address          Netmask  Gateway Address  Metric
+       172.19.0.2  255.255.255.255        10.0.75.2       1
+...
+```
+
+You may remove this static route at anytime with this simple command:
+```
+route -p delete 172.19.0.2
+```
+
+You may adjust IP address and mask to route part or all of the Docker traffic.
+
+For example:
+```
 route -p add 172.16.0.0 mask 255.240.0.0 10.0.75.2
-route -p delete 172.16.0.0
-route print -4
 ```
 
 ## Useful commands
