@@ -10,8 +10,18 @@ Did you find it useful? Give it a star!
 
 For Windows users:
 
-- Windows 10 Professional (or Enterprise)
+- Windows 10 Professional (or Enterprise) (OS Build 15063 or later)
 - Docker Desktop for Windows 2.x
+
+> Facing some issues occurring during Docker start up?
+> > "*Error: Hardware assisted virtualization and data execution protection must be enabled in the BIOS.*"
+>
+> Make sure your computer station or your server has the following services active:
+>
+>  - Microsoft **Hyper-V**
+>  - CPU vendor-specific BIOS-level hardware virtualization aka **VT-x/AMD-v**
+>
+> See Docker's [virtualization](https://docs.docker.com/docker-for-windows/troubleshoot/#virtualization) troubleshoots for further details.
 
 For macOS and Linux users:
 
