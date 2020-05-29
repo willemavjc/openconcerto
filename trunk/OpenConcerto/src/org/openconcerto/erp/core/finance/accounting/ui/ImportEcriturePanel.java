@@ -1,16 +1,16 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- * 
+ *
  * Copyright 2011 OpenConcerto, by ILM Informatique. All rights reserved.
- * 
+ *
  * The contents of this file are subject to the terms of the GNU General Public License Version 3
  * only ("GPL"). You may not use this file except in compliance with the License. You can obtain a
  * copy of the License at http://www.gnu.org/licenses/gpl-3.0.html See the License for the specific
  * language governing permissions and limitations under the License.
- * 
+ *
  * When distributing the software, include this License Header Notice in each file.
  */
- 
+
  package org.openconcerto.erp.core.finance.accounting.ui;
 
 import org.openconcerto.erp.config.ComptaPropsConfiguration;
@@ -203,7 +203,11 @@ public class ImportEcriturePanel extends JPanel {
         for (int i = 0; i < rowCount; i++) {
             int column = 0;
             try {
-                // Column 0
+                // @willemavjc 2020/05/29: The current format is said to be as follow.
+                // <date>;<journal>;<account>;<document>;<label>;<debit>;<credit>
+                // Note: Column index starts from 0.
+
+                // Column 0: Date
                 final Object firstValue = m.getValueAt(i, column);
                 if (firstValue == null) {
                     break;
@@ -220,30 +224,10 @@ public class ImportEcriturePanel extends JPanel {
                 if (dateOrigin == null) {
                     dateOrigin = dateStringValue;
                 }
-                // Date
                 gen.putValue("DATE", dateValue);
                 column++;
 
-                if (!dateOrigin.equals(dateStringValue)) {
-                    dateOrigin = dateStringValue;
-                    if (!dryRun) {
-                        idMvt = gen.getNewMouvement("", 1, 1, mvtName);
-                    } else if (soldeGlobal != 0) {
-                        final double soldeMvt = soldeGlobal / 100.0;
-                        SwingUtilities.invokeLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                JOptionPane.showMessageDialog(null,
-                                        "Le mouvement du " + dateStringValue + " ne respecte pas la partie double (Solde du mouvement : " + soldeMvt + ")!\nImport annulé!");
-                            }
-                        });
-                        return false;
-                    }
-                }
-
-                // Journal
-                // Column 1
+                // Column 1: Journal
                 final String valueJrnl = m.getValueAt(i, column).toString();
                 if (!dryRun && mapJournal.get(valueJrnl) == null) {
                     SwingUtilities.invokeAndWait(new Runnable() {
@@ -262,8 +246,7 @@ public class ImportEcriturePanel extends JPanel {
                 gen.putValue("ID_JOURNAL", this.mapJournal.get(valueJrnl));
                 column++;
 
-                // Compte
-                // Column 2
+                // Column 2: Account
                 final String trim = m.getValueAt(i, column).toString().trim();
                 String numCompt = trim;
                 if (trim.contains(".")) {
@@ -276,34 +259,57 @@ public class ImportEcriturePanel extends JPanel {
                 }
                 column++;
 
-                // Nom de la pièce
-                // Column 3
+                // Column 3: Document
                 String stringPiece = m.getValueAt(i, column).toString();
                 if (stringPiece != null && stringPiece.length() > 0 && stringPiece.contains(".")) {
                     stringPiece = stringPiece.substring(0, stringPiece.indexOf('.'));
                 }
-                column++;
-                // Column 4
-                gen.putValue("NOM", m.getValueAt(i, column).toString() + " " + stringPiece);
+                // @willemavjc 2020/05/29: Stores the document name. (Can't explain why this has been missing from the start.)
+                gen.putValue("NOM_PIECE", stringPiece);
                 column++;
 
-                // Montants
-                // Column 5
+                // Column 4: Label
+                // @willemavjc 2020/05/29: Removes the concatenation of the "document" (stringPiece) to the "label".
+                // gen.putValue("NOM", m.getValueAt(i, column).toString() + " " + stringPiece);
+                gen.putValue("NOM", m.getValueAt(i, column).toString());
+                column++;
+
+                // Column 5: Debit
                 final String stringValueD = m.getValueAt(i, column).toString();
                 long montantD = GestionDevise.parseLongCurrency(stringValueD);
+                gen.putValue("DEBIT", montantD);
                 column++;
-                // Column 6
+
+                // Column 6: Credit
                 final String stringValueC = m.getValueAt(i, column).toString();
                 long montantC = GestionDevise.parseLongCurrency(stringValueC);
                 gen.putValue("CREDIT", montantC);
-                gen.putValue("DEBIT", montantD);
+
+                // Balance
                 soldeGlobal += montantD;
                 soldeGlobal -= montantC;
 
-                // Mouvement
+                // Generates a new transaction identifier whenever the date has changed from the previous iteration.
+                // Then stores the related id.
+                if (!dateOrigin.equals(dateStringValue)) {
+                    dateOrigin = dateStringValue;
+                    if (!dryRun) {
+                        idMvt = gen.getNewMouvement("", 1, 1, mvtName);
+                    } else if (soldeGlobal != 0) {
+                        final double soldeMvt = soldeGlobal / 100.0;
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                JOptionPane.showMessageDialog(null, "Le mouvement du " + dateStringValue + " ne respecte pas la partie double (Solde du mouvement : " + soldeMvt + ")!\nImport annulé!");
+                            }
+                        });
+                        return false;
+                    }
+                }
                 gen.putValue("ID_MOUVEMENT", idMvt);
 
-                gen.putValue("NOM", m.getValueAt(i, 4).toString() + " " + stringPiece);
+                // @willemavjc 2020/05/29: Seems to be a duplicate of line 290.
+                // gen.putValue("NOM", m.getValueAt(i, 4).toString() + " " + stringPiece);
             } catch (Exception e) {
                 throw new IllegalStateException("Donnée invalide sur la ligne " + (i + 1) + " , colonne " + (column + 1), e);
             }
