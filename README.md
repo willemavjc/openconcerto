@@ -4,7 +4,7 @@ Build and set up a Docker[ized] PostgreSQL database OpenConcerto ready.
 
 This installation is intended for multi-user environments but can be convenient for single-user environments as a much more flexible alternative to Java H2 database.
 
-Did you find it useful? Give it a star!
+Did you find this educational project useful? Give it a star!
 
 ## Prerequisites
 
@@ -138,7 +138,7 @@ PS C:\Users\me\Desktop> ls
 PS C:\Users\me\Desktop> ./client.ps1
 ```
 
-As of Dec. 2019, `client.ps1` will install an OpenConcerto 1.6.3 over a OpenJDK 14. Both releases can be modified from the upper section of the script.
+As of Dec. 2019, `client.ps1` will install an OpenConcerto 1.6.3 over an OpenJDK 14. Both releases can be modified from the upper section of the script.
 
 ## Execution policy restriction
 
@@ -153,13 +153,13 @@ Simply create a shell script and then give it the execution permission:
 0. `cd ~`
 1. `vi x11.sh`
 2. `i`
-3. Copy paste the script's content
+3. Copy paste the script's contents (see below)
 4. `ESCAPE` 
 5. `:wq`
 6. `chmod +x x11.sh`
 7. `./x11.sh`
 
-Script's content:
+Script's contents:
 ```
 #!/bin/bash
 nohup /usr/bin/Xvfb ${DISPLAY} -screen 0 ${RESOLUTION} -ac +extension GLX +render -noreset >/dev/null 2>&1 &
@@ -169,7 +169,7 @@ nohup x11vnc -xkb -noxrecord -noxfixes -noxdamage -display ${DISPLAY} -forever -
 
 For this script (and the graphical interface) to be launched at start up, add it to `init.d`.
 
-*Note for myself: Automate these steps inside `client.ps1`.*
+**Note for myself:** Automate these steps inside `client.ps1`.
 
 ## Access via VNC Viewer
 
